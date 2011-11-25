@@ -1,0 +1,17 @@
+pygnad - PYthonGtkNetzwerkAuslastungsDing - shows network utilisation in a Tray Icon
+
+written 2011 by Florian Streibelt.
+
+
+Motivation
+----------
+
+I was not able to find a TrayIcon that shows me the Bandwith utilisation of network interfaces
+in a lxpanel so I wrote my own. Besides I wanted to learn python :)
+
+
+
+TODO
+----
+
+Allow command line to give a list of interfaces that should get summed.
