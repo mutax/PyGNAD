@@ -35,14 +35,14 @@ class StatusIcc():
 
 	# activate callback
 	def activate( self, widget, data=None):
-		global mailq
+		global pygnad
 		dialog = gtk.MessageDialog(
 		parent         = None,
 		flags          = gtk.DIALOG_DESTROY_WITH_PARENT,
 		type           = gtk.MESSAGE_INFO,
 		buttons        = gtk.BUTTONS_OK,
-		message_format = mailq)
-		dialog.set_title('Status of mailq')
+		message_format = pygnad)
+		dialog.set_title('Status of PyGNAD')
 		dialog.connect('response', self.show_hide)
 		dialog.show()
    
@@ -64,14 +64,14 @@ class StatusIcc():
 
 	# popup callback
 	def popup(self, button, widget, data=None):
-		global mailq
+		global pygnad
 		dialog = gtk.MessageDialog(
 		parent         = None,
 		flags          = gtk.DIALOG_DESTROY_WITH_PARENT,
 		type           = gtk.MESSAGE_INFO,
 		buttons        = gtk.BUTTONS_OK_CANCEL,
-		message_format = "Close the mailq tray icon?")
-		dialog.set_title('Status of mailq')
+		message_format = "Close the PyGNAD tray icon?")
+		dialog.set_title('Status of PyGNAD')
 		dialog.connect('response', self.destroyer)
 		dialog.show()
      
