@@ -35,14 +35,26 @@ class StatusIcc():
 
 	# activate callback
 	def activate( self, widget, data=None):
-		global pygnad
+		global nic
+		v=0
+		max=0
+		for i in range(self.w):
+			x=self.myqueue[i]
+			v+=x
+			if x>max:
+				max=x
+		b=max/ival
 		dialog = gtk.MessageDialog(
 		parent         = None,
 		flags          = gtk.DIALOG_DESTROY_WITH_PARENT,
 		type           = gtk.MESSAGE_INFO,
 		buttons        = gtk.BUTTONS_OK,
-		message_format = pygnad)
-		dialog.set_title('Status of PyGNAD')
+		message_format = 'Status of nic %s:\n' % (nic)
+			+'%i Bytes transferered in the last %i seconds shown.\n' % (v,self.w*ival)
+			+'max bandwidth: %d B/s\n'  % (b)
+			+'avg bandwidth: %s B/s\n'  % (v/(self.w*ival))
+			)
+		dialog.set_title(nic+ ' status')
 		dialog.connect('response', self.show_hide)
 		dialog.show()
 
@@ -56,7 +68,7 @@ class StatusIcc():
 
 	# destroyer callback
 	def  destroyer(self, widget,response_id, data= None):
-		if response_id == gtk.RESPONSE_OK:
+		if response_id == gtk.RESPONSE_YES:
 			gtk.main_quit()
 			#sys.exit(1)
 		else:
@@ -64,19 +76,18 @@ class StatusIcc():
 
 	# popup callback
 	def popup(self, button, widget, data=None):
-		global pygnad
 		dialog = gtk.MessageDialog(
 		parent         = None,
 		flags          = gtk.DIALOG_DESTROY_WITH_PARENT,
 		type           = gtk.MESSAGE_INFO,
-		buttons        = gtk.BUTTONS_OK_CANCEL,
-		message_format = "Close the PyGNAD tray icon?")
-		dialog.set_title('Status of PyGNAD')
+		buttons        = gtk.BUTTONS_YES_NO,
+		message_format = "Terminate the PyGNAD tray icon?")
+		dialog.set_title('Close PyGNAD?')
 		dialog.connect('response', self.destroyer)
 		dialog.show()
 
 	def appendValue(self,value=0):
-		print("got new value to add: %s \n" %value)
+		sys.stderr.write("got new value to add: %s \n" %value)
 		self.myqueue.popleft()
 		self.myqueue.append(value)
 		self.draw_graph()
@@ -106,7 +117,7 @@ class StatusIcc():
 			v=self.myqueue[i]
 			if (v>maxvalue):
 				maxvalue=v
-		print("max value in queue: %i \n" %maxvalue)
+		sys.stderr.write("max value in queue: %i \n" %maxvalue)
 
 		#drawable.draw_line(gc, 0, 0, w,h)
 		for i in range(w):
@@ -114,12 +125,12 @@ class StatusIcc():
 				value =h-int( (self.myqueue[i] / float(maxvalue) )*h)
 			else:
 				value = h
-			#print(" %i " % value)
+			#sys.stderr.write(" %i " % value)
 			gc.set_foreground(red)
 			drawable.draw_line(gc,i,h,i,value)
 			#gc.set_foreground(green)
 			#drawable.draw_line(gc,i,0,i,value)
-		print("\n")
+		sys.stderr.write("\n")
 
 		#-------------------------
 
@@ -128,7 +139,7 @@ class StatusIcc():
 		self.staticon.set_from_pixbuf(pb)
 
 	def timer_update(self):
-		print("tick\n")
+		sys.stderr.write("tick\n")
 		#/sys/class/net/wlan0/statistics/tx_bytes
 		#value_t1 = int(open("/sys/class/net/wlan0/statistics/tx_bytes","r").read())
 		#value_r1 = int(open("/sys/class/net/wlan0/statistics/rx_bytes","r").read())
@@ -148,7 +159,7 @@ class StatusIcc():
 			self.lastvalue=value
 
 		delta=value - self.lastvalue
-		print("delta = %i on nic %s \n" % (delta,self.nic))
+		sys.stderr.write("delta = %i on nic %s \n" % (delta,self.nic))
 
 		self.appendValue(delta);
 
@@ -169,7 +180,7 @@ class StatusIcc():
 		for i in range(self.w):
 			self.myqueue.append(20)
 
-		print("icon init started\n")
+		sys.stderr.write("icon init started\n")
 		# create a new Status Icon
 		self.staticon = gtk.StatusIcon()
 
@@ -180,7 +191,7 @@ class StatusIcc():
 		self.staticon.connect("activate", self.activate)
 		self.staticon.connect("popup_menu", self.popup)
 		self.staticon.set_visible(True)
-		print("icon init finished\n")
+		sys.stderr.write("icon init finished\n")
 
 
 		# register a  timer
@@ -195,7 +206,11 @@ def main(argv=None):
 	if argv is None:
 		argv = sys.argv
 
-
+	global nic
+	global ival
+	rxbytes=0
+	txbytes=0
+	time=0
 	nic = "eth0"
 	fgcolor = "red"
 	bgcolor = "black"
