@@ -20,7 +20,7 @@
 
 '''
 
-import gtk, gobject, os, sys, pyinotify 
+import gtk, gobject, os, sys, pyinotify
 from pyinotify import WatchManager, Notifier, ProcessEvent, EventsCodes
 from collections import deque
 import time
@@ -45,14 +45,14 @@ class StatusIcc():
 		dialog.set_title('Status of PyGNAD')
 		dialog.connect('response', self.show_hide)
 		dialog.show()
-   
+
 	# Show_Hide callback
 	def  show_hide(self, widget,response_id, data= None):
 		if response_id == gtk.RESPONSE_YES:
 			widget.hide()
 		else:
 			widget.hide()
-           
+
 
 	# destroyer callback
 	def  destroyer(self, widget,response_id, data= None):
@@ -74,7 +74,7 @@ class StatusIcc():
 		dialog.set_title('Status of PyGNAD')
 		dialog.connect('response', self.destroyer)
 		dialog.show()
-     
+
 	def appendValue(self,value=0):
 		print("got new value to add: %s \n" %value)
 		self.myqueue.popleft()
@@ -157,7 +157,7 @@ class StatusIcc():
 
 
 	def __init__(self,nic,fg,bg,ival):
-		
+
 		gtk.gdk.threads_init()
 
 		self.myqueue=deque()
@@ -174,7 +174,7 @@ class StatusIcc():
 		self.staticon = gtk.StatusIcon()
 
 		#self.draw_graph()
-	
+
 		gobject.timeout_add_seconds(ival, self.timer_update)
 
 		self.staticon.connect("activate", self.activate)
@@ -201,7 +201,7 @@ def main(argv=None):
 	bgcolor = "black"
 	ival = 5
 
-	try:                                
+	try:
 		opts, args = getopt.getopt(argv[1:], "hn:f:b:i:", ["help","nic=", "fgcolor=","bgcolor=","interval="])
 	except getopt.GetoptError:
 		usage(argv[0])
@@ -211,7 +211,7 @@ def main(argv=None):
 	for opt, arg in opts:
 		if opt in ("-h", "--help"):
 			usage(argv[0])
-			sys.exit()                  
+			sys.exit()
 		elif opt in ("-n", "--nic"):
 			nic = arg
 		elif opt in ("-f", "--fgcolor"):
